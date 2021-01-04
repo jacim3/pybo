@@ -17,13 +17,20 @@
                 </div>
 
                 <!-- 게시글 수정 부분 -->
-                {% if request.user == question.author %}
-                    <div class="my-3">
+
+                <div class="my-3">
+                    {% if request.user == question.author %}
                         <a href="{% url 'pybo:question_modify' question.id %}"
                            class="btn btn-sm btn-outline-secondary">수정</a>
-                    </div>
-                {% endif %}
-            <!-- 게시글 수정 부분 -->
+                        <!-- 게시글 수정 부분 -->
+
+                        <!-- 게시글 삭제 버튼 -->
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary"
+                           data-uri="{% url 'pybo:question_delete' question.id %}">삭제</a>
+                        <!-- 게시글 삭제 버튼 -->
+                    {% endif %}
+                </div>
+
             </div>
         </div>
 

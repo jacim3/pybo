@@ -1,13 +1,20 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Question(models.Model):
+    # django.contrib.auth 가 제공하는 기본 앱인 user 를 통하여 사용자 정보를 가져온다.
+    # CASCADE 가 걸리면, 계정에 제약이 걸려, 계정이 삭제될 시, 계정과 연결된 Question 모델 데이터를 모두 삭제하게 된다.
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     # 글자수를 제한하고 싶은 경우
     subject = models.CharField(max_length=200)
     # 글자수를 제한하지 않는 값을 가질 경우
     content = models.TextField()
     # 날짜, 시간 관련 속성들 저장
     create_date = models.DateTimeField()
+    # 질문 수정 날싸 null=True 는 null 허용, blank = True 는 form.is_valid() 검사 무시.
+    # 수정일시는 '수정한 경우에만' 생성되므로, 비워둘 수 있게 지정한다.
+    modify_date = models.DateTimeField(null=True, blank=True)
 
     # 해당 모델이 출력되었을 때, 이에대한 객체의 표현 형식을 정의
     def __str__(self):
@@ -15,10 +22,11 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
-
+    modify_date = models.DateTimeField(null=True, blank=True)
     """
         데이터 만들고 조회하기
         

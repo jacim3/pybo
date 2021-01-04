@@ -1,5 +1,5 @@
 {% extends 'pybo/base.html' %}
-
+{% load pybo_filter %}
 {% block title %}
     게시판 리스트
 {% endblock %}
@@ -16,9 +16,10 @@
     <div class="container my-3">
         <table class="table">
             <thead>
-            <tr class="thead-dark">
+            <tr class="text-center thead-dark">
                 <th>번호</th>
-                <th>제목</th>
+                <th style="width: 50%">제목</th>
+                <th>글쓴이</th>
                 <th>작성일시</th>
             </tr>
             </thead>
@@ -26,12 +27,20 @@
             <!-- context 로 받아온 question_list 가 존재하면 실행.-->
             {% if question_list %}
                 {% for question in question_list %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>
-                            <!-- nameSpace:urlName-->
+                    <tr class="text-center">
+                        <!-- 게시물 번호를 더욱더 합리적으로 변경. 번호 = 전체 수 - 페이지 별 일괄 시작 인텍스 - 현재 인덱스 -->
+                        <!-- <td>{{ forloop.counter }}</td> -->
+                        <td>{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}</td>
+
+                        <td class="text-left">
+                            <!-- nameSpace:urlName 과 parameter 를 함께 보낸다.-->
+                            <!-- urls.py 에 매핑된 경로의 지정된 파라메타인 <int:question_id> 가 question_id로 보내질 수 있도록 -->
                             <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
+                            {% if question.answer_set.count > 0 %}
+                                <span class="text-danger small ml-2">{{ question.answer_set.count }}</span>
+                            {% endif %}
                         </td>
+                        <td>{{ question.author }}</td>
                         <td>{{ question.create_date }}</td>
                     </tr>
                 {% endfor %}
@@ -44,4 +53,36 @@
         </table>
         <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">질문 등록하기</a>
     </div>
+
+    <!-- 페이징 처리 부분 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if question_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ question_list.previous_page_number }}">이전</a>
+            </li>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in question_list.paginator.page_range %}
+            <!-- 페이지탭 정보가 현재 기준 -+3 범위로 보이게 조정 -->
+            {% if page_number >= question_list.number|add:-3 and page_number <= question_list.number|add:3 %}
+                {% if page_number == question_list.number %}
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if question_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ question_list.next_page_number }}">다음</a>
+            </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징 처리 종료 -->
 {% endblock %}

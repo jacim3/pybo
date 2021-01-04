@@ -6,13 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" href="{% static 'css/pybo/bootstrap.min.css' %}">
 
+
     <title>
         {% block title %}
         {% endblock %}
     </title>
 </head>
 <body>
+{% include 'pybo/navbar.html' %}
 {% block content %}
 {% endblock %}
+
+<script src="{% static 'js/pybo/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'js/pybo/bootstrap.min.js' %}"></script>
 </body>
 </html>

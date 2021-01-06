@@ -7,7 +7,7 @@
             </div>
         {% endfor %}
     {% endfor %}
-    {% for error in form.non_field_errors %}   <!-- 넌필드 오류를 출력한다. -->
+    {% for error in form.non_field_errors %}   <!-- 넌필드 오류(중복??)를 출력한다. -->
         <div class="alert alert-danger">
             <strong>{{ error }}</strong>
         </div>
